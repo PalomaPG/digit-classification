@@ -1,6 +1,7 @@
 import sys
 import numpy as np
 from random import shuffle
+import matplotlib.pyplot as plt
 
 from classifier.NNClassifier import NNClassifier
 
@@ -15,20 +16,40 @@ def main(fpath, pics_path):
         verify_representativity(data, total_rows, train_rows, test_rows)
     ann = NNClassifier(x_train, y_train, x_test, y_test)
 
-    #3 a,b,c
-    ann.train_eval_validation(layer_sizes=[64])
-    ann.predict(ann.x_val, ann.y_val, cm_plot_name=pics_path+'/one_layer_val.png')
+    print('Item 3, secciones a, b, c')
+    # 3 a,b,c
+    ann.fit_model(layer_sizes=[40])
+    ann.predict(ann.x_val, ann.y_val,
+                cm_plot_name=pics_path+'/one_layer_val.png')
 
-    #4 a
-    ann.train_eval_validation(layer_sizes=[64, 64, 64])
-    ann.predict(ann.x_val, ann.y_val, cm_plot_name=pics_path + '/three_layer_val.png')
+    print('Item 4, seccion a')
+    print('\nPrueba con una capa de 10 neuronas (sobre conjunto de validacion)')
+    ann.fit_model(layer_sizes=[10])
+    ann.predict(ann.x_val, ann.y_val,
+                cm_plot_name=pics_path+'/neurons10.png')
 
-    #4 b (optimodel)
-    ann.train_eval_validation(layer_sizes=[64], n_train_times=3)
-    ann.predict(ann.x_test, ann.y_test, cm_plot_name=pics_path+'/opt_test_sig.png')
+    print('\nPrueba con una capa de 32 neuronas (sobre conjunto de validacion)')
+    ann.fit_model(layer_sizes=[32])
+    ann.predict(ann.x_val, ann.y_val,
+                cm_plot_name=pics_path + '/neurons32.png')
 
-    ann.train_eval_validation(layer_sizes=[64], active_func='relu', n_train_times=3)
-    ann.predict(ann.x_test, ann.y_test, cm_plot_name=pics_path+'/opt_test_relu.png')
+    print('\nPrueba con una capa de 64 neuronas (sobre conjunto de validacion)')
+    ann.fit_model(layer_sizes=[64])
+    ann.predict(ann.x_val, ann.y_val,
+                cm_plot_name=pics_path + '/neurons64.png')
+
+    print('Item 4, seccion b')
+    print('\nPrueba con una capa de 64 neuronas, usando funcion sigmoide\n'
+          '(sobre conjunto de prueba)')
+    ann.fit_model(layer_sizes=[64], n_train_times=3)
+    ann.predict(ann.x_test, ann.y_test, cmap=plt.cm.Reds,
+                cm_plot_name=pics_path+'/opt_test_sig.png')
+
+    print('\nPrueba con una capa de 64 neuronas, usando funcion ReLu\n'
+          '(sobre conjunto de prueba)')
+    ann.fit_model(layer_sizes=[64], active_func='relu', n_train_times=3)
+    ann.predict(ann.x_test, ann.y_test, cmap=plt.cm.Reds,
+                cm_plot_name=pics_path+'/opt_test_relu.png')
 
 
 def everything_is_ok(rates, train_rates, test_rates):
